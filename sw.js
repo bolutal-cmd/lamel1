@@ -1,8 +1,8 @@
 // Lamel service worker: uygulamanın çevrimdışı da açılmasını sağlar.
-// index.html her açılışta önce ağdan istenir, böylece GitHub'a attığınız
-// yeni sürüm hemen gelir; ağ yoksa önbellekteki sürüm açılır.
+// index.html her açılışta önce ağdan istenir (tarayıcı önbelleği atlanarak), böylece
+// GitHub'a attığınız yeni sürüm hemen gelir; ağ yoksa önbellekteki sürüm açılır.
 // Simgeleri değiştirirseniz VERSION değerini artırın.
-const VERSION = 'lamel-v1';
+const VERSION = 'lamel-v2';
 const FONTS = 'lamel-fonts';
 const SHELL = [
   './',
@@ -34,8 +34,8 @@ self.addEventListener('fetch', event => {
 
   if (req.mode === 'navigate') {
     event.respondWith(
-      fetch(req)
-        .then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put('./index.html', copy)); return res; })
+      fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' })
+        .then(res => { if (res.ok) { const copy = res.clone(); caches.open(VERSION).then(c => c.put('./index.html', copy)); } return res; })
         .catch(() => caches.match('./index.html'))
     );
     return;

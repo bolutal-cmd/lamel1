@@ -247,6 +247,23 @@ dl{margin:0}
 .ba-tag{font-size:12px;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
 .ba-tag.ok{border-color:var(--accent-edge);color:var(--ink)}
 #empty{overflow-y:auto}
+.help{width:min(640px,calc(100vw - 24px));max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);padding:0;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden}
+.help[open]{display:flex;flex-direction:column}
+.help::backdrop{background:rgba(10,12,15,.55)}
+.help-h{flex:none;display:flex;align-items:center;gap:8px;padding:12px 14px 12px 18px;border-bottom:1px solid var(--line)}
+.help-h h2{margin:0;font-size:18px;font-weight:600}
+.help-x{margin-left:auto}
+.help-b{flex:1;min-height:0;overflow-y:auto;padding:6px 18px 20px;line-height:1.5}
+.help-steps{margin:12px 0 0;padding:0;list-style:none;counter-reset:hs}
+.help-steps li{position:relative;padding:0 0 14px 36px;counter-increment:hs}
+.help-steps li::before{content:counter(hs);position:absolute;left:0;top:1px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.help-steps h3{margin:0 0 2px;font-size:15px;font-weight:600}
+.help-steps p{margin:0}
+.help-sec{margin:18px 0 6px;font-size:15px;font-weight:600}
+.help-b>p{margin:0 0 8px}
+.help-b ul{margin:0;padding-left:20px}
+.help-b ul li{margin-bottom:4px}
+.help-note{color:var(--muted);font-size:14px;margin-top:14px !important}
 .recent{margin-top:26px;width:min(100%,420px);text-align:left}
 .recent-h{margin:0 0 8px;font-size:13.5px;color:var(--stage-muted)}
 .recent-list{list-style:none;margin:0;padding:0;border:1px solid rgba(255,255,255,.14);border-radius:8px;overflow:hidden}
@@ -260,6 +277,7 @@ dl{margin:0}
 .recent-del.arm{color:#FF8A8A}
 .empty .btn:not(.primary){color:var(--ink)}
 .step .row{grid-template-columns:5.2em minmax(0,1fr) 4.8em}
+.step input[type=number]{box-sizing:border-box}
 .ap-sum{margin:14px 0 0;font-weight:500;line-height:1.5}
 .intro{padding:16px;color:var(--muted);line-height:1.5;margin:0}
 .toast-host{position:fixed;left:0;right:0;bottom:0;padding:0 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;z-index:20}
@@ -301,6 +319,9 @@ body.has-img .no-img{display:none!important}
     </button>
     <button class="tb" id="prjToggle" type="button" aria-pressed="false" title="Proje: LIF içindeki görüntüler" hidden>
       <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="6.5" height="5.5" rx="1"/><path d="M13 7.25h7.5"/><rect x="3.5" y="14" width="6.5" height="5.5" rx="1"/><path d="M13 16.75h7.5"/></svg><span>Proje</span>
+    </button>
+    <button class="tb" id="helpBtn" type="button" title="Adım adım kullanım" aria-label="Yardım" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.5a2.4 2.4 0 0 1 4.6.9c0 1.6-2.3 2.1-2.3 3.6"/><path d="M12 17.1v.1"/></svg><span>Yardım</span>
     </button>
     <span class="sep"></span>
     <button class="tb" id="undoBtn" type="button" title="Geri al (Ctrl+Z)" aria-label="Geri al" disabled>
@@ -354,6 +375,33 @@ body.has-img .no-img{display:none!important}
       <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
     </button>
   </header>
+  <dialog class="help" id="helpDlg" aria-labelledby="helpTitle">
+    <div class="help-h"><h2 id="helpTitle">Adım adım kullanım</h2><button class="btn sm help-x" id="helpClose" type="button">Kapat</button></div>
+    <div class="help-b">
+      <ol class="help-steps">
+        <li><h3>Dosyayı açın</h3><p>Üst çubuktaki “Aç” düğmesine basın ya da dosyayı görüntü alanına sürükleyin. LIF dosyasındaki görüntüler Proje listesinde görünür; çalışacağınız görüntüye basın.</p></li>
+        <li><h3>Bölgeleri çizin</h3><p>Üst çubuktan dikdörtgen, elips ya da serbest alan aracını seçin ve ölçmek istediğiniz bölgeyi (örneğin corpus callosum) çizin. Analiz bölümünün 1. adımında bölgeye ad verin. Yalnız işaret olarak çizdiğiniz bir şeklin “Ölç” kutusunun işaretini kaldırın. Bunu her görüntü için yapın; görüntüler arasında üst çubuktaki “Proje” düğmesiyle açılan listeden geçebilirsiniz.</p></li>
+        <li><h3>Ayarları yapın</h3><p>2. adımda IBA1 kanalını, projeksiyonu (genellikle Maksimum), rolling ball yarıçapını, medyanı ve en küçük parça boyutunu girin. Eşiği, kırmızı önizlemede yalnız IBA1 sinyali seçilecek şekilde ayarlayın. Eşiği her iki gruptan birkaç görüntüde kontrol edin.</p></li>
+        <li><h3>Ayarları onaylayın</h3><p>“Ayarları onayla”ya basın. Ayarlar kilitlenir ve bütün görüntülere aynı ayarlar uygulanır. Değiştirmeniz gerekirse “Ayarları değiştir”e basın.</p></li>
+        <li><h3>Görüntüleri seçin</h3><p>3. adımda analiz edilecek görüntülerin kutusunu işaretleyin ya da “Hepsini seç”e basın. Bölgesi olmayan görüntüler seçilemez.</p></li>
+        <li><h3>Analiz edin</h3><p>4. adımda “Seçili … görüntüyü analiz et”e basın. Sonuçlar tabloda görünür. Bir satıra basınca o görüntü açılır ve sonucu önizlemede kontrol edebilirsiniz.</p></li>
+        <li><h3>Sonuçları kaydedin</h3><p>“Sonuçları CSV olarak kaydet” ile tabloyu indirin. “Kontrol görüntülerini kaydet” her görüntü için eşiği geçen alanı kırmızı, bölgeleri sarı gösteren bir resim verir.</p></li>
+      </ol>
+      <h3 class="help-sec">Kaldığınız yerden devam etmek</h3>
+      <p>Çizimleriniz, seçtiğiniz görüntüler ve sonuçlar bu cihazda kendiliğinden kaydedilir. Aynı dosyayı yeniden açtığınızda geri gelir; LIF dosyasında en son baktığınız görüntü açılır. Açılış ekranındaki “Son çalıştığınız dosyalar” listesinden dosyayı seçebilirsiniz.</p>
+      <p>Kayıtlar yalnız bu cihazda durur. Yedek almak ya da başka bir cihazda devam etmek için ayarlar panelindeki “ROI dosyası” bölümünden bölgeleri kaydedin ve diğer cihazda “ROI dosyası yükle” ile açın.</p>
+      <h3 class="help-sec">Dikkat edilecekler</h3>
+      <ul>
+        <li>Karşılaştıracağınız bütün görüntüleri aynı mikroskop ayarlarıyla ve aynı Z kalınlığıyla çekin.</li>
+        <li>Bütün gruplara aynı ayarları uygulayın. Ayarları sonradan değiştirirseniz eski sonuçların yanında “eski ayarla” yazar; karşılaştırmadan önce hepsini yeniden analiz edin.</li>
+        <li>Mümkünse bölgeleri ve eşiği, görüntünün hangi gruba ait olduğunu bilmeden belirleyin.</li>
+        <li>Önizleme büyük görüntülerde yavaşlarsa 2. adımdaki “Önizle” kutusunu kapatın; analizin sonucu bundan etkilenmez.</li>
+      </ul>
+      <h3 class="help-sec">Fiji ile doğrulama</h3>
+      <p>Bölgeleri “ROI dosyası” bölümünden kaydedin ve Lamel ile birlikte gelen Fiji makrosunu (fiji/Lamel_IBA1_alan.ijm) aynı ayarlarla çalıştırın. İki programın sonuçları aynı çıkar.</p>
+      <p class="help-note">Klavye kısayolları ayarlar panelindeki “Kısayollar” bölümünde yazıyor.</p>
+    </div>
+  </dialog>
 
   <aside class="proj" id="proj" aria-label="Proje görüntüleri" hidden>
     <div class="proj-head">
@@ -374,6 +422,7 @@ body.has-img .no-img{display:none!important}
         <div class="empty-actions">
           <button class="btn primary" id="openBtn2" type="button">Dosya aç</button>
           <button class="btn" id="demoBtn" type="button">Örnek Z-stack’i aç</button>
+          <button class="btn" id="helpBtn2" type="button">Nasıl kullanılır?</button>
           <button class="btn primary" id="emptyProj" type="button" hidden>Projeyi göster</button>
         </div>
         <div class="recent" id="recent" hidden>
@@ -429,6 +478,7 @@ body.has-img .no-img{display:none!important}
     <details open class="needs-img" id="secBatch">
       <summary>Analiz <span class="sub">bölgelerde pozitif alan</span></summary>
       <div class="sec">
+        <div class="btns" style="margin:0 0 12px"><button class="btn sm" id="helpBtn3" type="button" aria-haspopup="dialog">Adım adım anlatım</button></div>
         <ol class="steps">
           <li class="step" id="st1">
             <div class="step-h"><span class="step-n">1</span><span class="step-t">Bölgeleri çizin</span><span class="step-s" id="st1s"></span></div>
@@ -442,13 +492,17 @@ body.has-img .no-img{display:none!important}
             <div class="row2"><label for="baProj">Projeksiyon</label><select id="baProj"><option value="max">Maksimum</option><option value="mean">Ortalama</option><option value="sum">Toplam</option></select></div>
             <div class="row2"><label for="baRad">Arka plan</label><div class="range-in"><input type="number" id="baRad" min="0" step="any" style="width:6em"><span>px yarıçap</span></div></div>
             <p class="hint" id="baRadNote"></p>
+            <div class="row2"><label for="baMed">Medyan</label><div class="range-in"><input type="number" id="baMed" min="0" step="0.5" style="width:6em"><span>px yarıçap</span></div></div>
+            <p class="hint" id="baMedNote"></p>
             <div class="row"><label for="baThr">Eşik</label><input type="range" id="baThr"><input type="number" id="baThrN" step="any" aria-label="Eşik değeri"></div>
             <p class="hint" id="baInfo"></p>
-            <div class="checks"><label><input type="checkbox" id="baPrev" checked> Eşiği geçen alanı kırmızı göster</label></div>
+            <div class="row2"><label for="baMin">Min. parça</label><div class="range-in"><input type="number" id="baMin" min="0" step="any" style="width:6em"><span id="baMinUnit">µm²</span></div></div>
+            <p class="hint" id="baMinNote"></p>
+            <div class="checks"><label><input type="checkbox" id="baPrev"> Önizle: eşiği geçen alan kırmızı görünür</label></div>
             <p class="hint" id="baCurEmpty">Bu görüntüde ölçülecek bölge yok. Eşiği kırmızı önizlemeye bakarak yine de ayarlayabilirsiniz.</p>
             <div class="tbl-wrap" id="baCurWrap" hidden><table id="baCurTable"><thead></thead><tbody></tbody></table></div>
             <div class="btns"><button class="btn primary wide" id="baLock" type="button">Ayarları onayla</button></div>
-            <p class="hint">Projeksiyon her zaman bütün Z dilimlerinden yapılır. Arka plan çıkarma, Fiji’deki Subtract Background komutuyla (rolling ball, varsayılan ayarlar) piksel piksel aynı sonucu verir.</p>
+            <p class="hint">İşlem sırası: bütün Z dilimlerinin projeksiyonu, arka plan çıkarma, medyan filtresi, eşik ve küçük parçaların atılması. Arka plan çıkarma ve medyan, Fiji’deki Subtract Background (rolling ball, varsayılan ayarlar) ve Median komutlarıyla piksel piksel aynı sonucu verir.</p>
           </li>
           <li class="step" id="st3">
             <div class="step-h"><span class="step-n">3</span><span class="step-t">Görüntüleri seçin</span><span class="step-s" id="st3s"></span></div>
@@ -3148,7 +3202,7 @@ function apHlCanvas() {
 }
 function drawAPLayer(ctx) {
   if (posPrevOn) ctx.drawImage(posPrevCv, 0, 0);
-  if (baPrevOn) ctx.drawImage(baPrevCv, 0, 0);
+  if (baPrevOn) ctx.drawImage(baPrevCv, 0, 0, state.img.width, state.img.height);
   if (apPrevOn) ctx.drawImage(apPrev, 0, 0);
   if (apResVisible()) {
     ctx.drawImage(apOut, 0, 0);
@@ -3572,27 +3626,219 @@ function rollingBall(src, W, H, radius) {
   return out;
 }
 
+// Median filter: port of ImageJ RankFilters (MEDIAN). Same circular kernel and the same
+// edge handling (pixels outside the image take the nearest edge value).
+function medianFilter(src, W, H, radius) {
+  if (radius >= 1.5 && radius < 1.75) radius = 1.75;
+  else if (radius >= 2.5 && radius < 2.85) radius = 2.85;
+  const r2 = Math.trunc(radius * radius) + 1, kr = Math.trunc(Math.sqrt(r2 + 1e-10));
+  const rows = [];
+  for (let dy = -kr; dy <= kr; dy++) rows.push(Math.trunc(Math.sqrt(r2 - dy * dy + 1e-10)));
+  let np = 0; for (const d of rows) np += 2 * d + 1;
+  const half = np >> 1, buf = new Float64Array(np), out = new src.constructor(W * H);
+  for (let y = 0; y < H; y++) {
+    const inY = y >= kr && y < H - kr;
+    for (let x = 0; x < W; x++) {
+      let k = 0;
+      if (inY && x >= kr && x < W - kr) {
+        for (let j = 0; j < rows.length; j++) { const d = rows[j], base = (y + j - kr) * W + x; for (let dx = -d; dx <= d; dx++) buf[k++] = src[base + dx]; }
+      } else {
+        for (let j = 0; j < rows.length; j++) {
+          let yy = y + j - kr; yy = yy < 0 ? 0 : yy >= H ? H - 1 : yy;
+          const d = rows[j], base = yy * W;
+          for (let dx = -d; dx <= d; dx++) { let xx = x + dx; xx = xx < 0 ? 0 : xx >= W ? W - 1 : xx; buf[k++] = src[base + xx]; }
+        }
+      }
+      // quickselect for the middle value (np is always odd)
+      let lo = 0, hi = np - 1;
+      while (lo < hi) {
+        const piv = buf[(lo + hi) >> 1]; let i = lo, j = hi;
+        while (i <= j) { while (buf[i] < piv) i++; while (buf[j] > piv) j--; if (i <= j) { const t = buf[i]; buf[i] = buf[j]; buf[j] = t; i++; j--; } }
+        if (half <= j) hi = j; else if (half >= i) lo = i; else break;
+      }
+      out[y * W + x] = buf[half];
+    }
+  }
+  return out;
+}
+// Removes 8-connected positive regions smaller than minPx pixels (as in Fiji's Analyze Particles).
+function sizeFilter(m, W, H, minPx) {
+  const n = W * H, stack = new Int32Array(n);
+  for (let s = 0; s < n; s++) {
+    if (m[s] !== 1) continue;
+    let top = 0, rd = 0; stack[top++] = s; m[s] = 2;
+    while (rd < top) {
+      const p = stack[rd++], x = p % W, y = (p - x) / W;
+      for (let dy = -1; dy <= 1; dy++) {
+        const yy = y + dy; if (yy < 0 || yy >= H) continue;
+        for (let dx = -1; dx <= 1; dx++) {
+          const xx = x + dx; if (xx < 0 || xx >= W || (dx === 0 && dy === 0)) continue;
+          const q = yy * W + xx; if (m[q] === 1) { m[q] = 2; stack[top++] = q; }
+        }
+      }
+    }
+    if (top < minPx) for (let k = 0; k < top; k++) m[stack[k]] = 0;
+  }
+  for (let i = 0; i < n; i++) if (m[i] === 2) m[i] = 1;
+  return m;
+}
+function maskOf(w, W, H, T, minPx) {
+  const n = W * H, m = new Uint8Array(n);
+  for (let i = 0; i < n; i++) if (w[i] >= T) m[i] = 1;
+  if (minPx > 1) sizeFilter(m, W, H, minPx);
+  return m;
+}
+// Shared by the background worker and the main-thread fallback.
+function baHandle(d, store) {
+  if (d.type === 'proc') {
+    let w = d.rad > 0 ? rollingBall(d.raw, d.W, d.H, d.rad) : d.raw;
+    if (d.med > 0) w = medianFilter(w, d.W, d.H, d.med);
+    store.set(d.sid, { w, W: d.W, H: d.H });
+    let mn = Infinity, mx = -Infinity;
+    for (let i = 0; i < w.length; i++) { const v = w[i]; if (v < mn) mn = v; if (v > mx) mx = v; }
+    if (!(mn <= mx)) { mn = 0; mx = 1; }
+    const copy = w.slice();
+    return { res: { w: copy, mn, mx }, transfer: [copy.buffer] };
+  }
+  if (d.type === 'mask') {
+    const s = store.get(d.sid); if (!s) throw new Error('İşlenmiş görüntü bulunamadı.');
+    const mask = maskOf(s.w, s.W, s.H, d.thr, d.minPx);
+    return { res: { mask }, transfer: [mask.buffer] };
+  }
+  if (d.type === 'drop') store.delete(d.sid);
+  return { res: {}, transfer: [] };
+}
+
 const BA_PROJ = { max: 'Maksimum', mean: 'Ortalama', sum: 'Toplam' };
 const BA_KEY = 'lamel.toplu';
-const ba = { ch: 0, proj: 'max', rad: 50, thr: null, prev: true, qcOn: true, locked: false, cache: null, timer: 0, results: [], qc: new Map(), running: false, sel: new Set() };
+const ba = { ch: 0, proj: 'max', rad: 50, med: 0, minA: 0, thr: null, prev: true, qcOn: true, locked: false,
+  cache: null, mask: null, maskBusy: false, maskAgain: false, pending: null, timer: 0, frame: 0,
+  results: [], qc: new Map(), running: false, sel: new Set(), rev: 0, lastSig: '', prevKey: '' };
 try {
   const v = JSON.parse(localStorage.getItem(BA_KEY) || 'null');
   if (v) {
     if (Number.isInteger(v.ch) && v.ch >= 0) ba.ch = v.ch;
     if (BA_PROJ[v.proj]) ba.proj = v.proj;
     if (Number.isFinite(v.rad) && v.rad >= 0) ba.rad = v.rad;
+    if (Number.isFinite(v.med) && v.med >= 0) ba.med = v.med;
+    if (Number.isFinite(v.minA) && v.minA >= 0) ba.minA = v.minA;
     if (Number.isFinite(v.thr)) ba.thr = v.thr;
     if (typeof v.qcOn === 'boolean') ba.qcOn = v.qcOn;
     if (typeof v.locked === 'boolean') ba.locked = v.locked && Number.isFinite(v.thr);
+    if (v.v === 2 && typeof v.prev === 'boolean') ba.prev = v.prev;
   }
 } catch (e) { /* storage unavailable */ }
-function baStore() { try { localStorage.setItem(BA_KEY, JSON.stringify({ ch: ba.ch, proj: ba.proj, rad: ba.rad, thr: ba.thr, qcOn: ba.qcOn, locked: ba.locked })); } catch (e) { /* ignore */ } }
+function baStore() {
+  try { localStorage.setItem(BA_KEY, JSON.stringify({ v: 2, ch: ba.ch, proj: ba.proj, rad: ba.rad, med: ba.med, minA: ba.minA, thr: ba.thr, qcOn: ba.qcOn, locked: ba.locked, prev: ba.prev })); } catch (e) { /* ignore */ }
+}
 const baPrevCv = document.createElement('canvas');
 let baPrevOn = false, baPrevData = null;
 const baIsInt = a => !(a instanceof Float32Array) && !(a instanceof Float64Array);
 const baUnit = img => img.calib ? img.calib.unit : 'px';
-const baSig = r => `${r.ch}|${r.proj}|${r.rad}|${r.thr}`;
+const baSig = r => `${r.ch}|${r.proj}|${r.rad}|${r.med || 0}|${r.minA || 0}|${r.thr}`;
 const baLif = () => state.lif && state.lif.current >= 0 ? state.lif : null;
+const baMinPx = (img, minA) => minA > 0 ? (img.calib ? minA / (img.calib.pw * img.calib.pw) : minA) : 0;
+
+// ----- background worker -----
+let baWorker = null, baWorkerOff = false, baReq = 0, baSidSeq = 0;
+const baJobs = new Map(), baLocal = new Map();
+function baWorkerGet() {
+  if (baWorker || baWorkerOff || typeof Worker !== 'function') return baWorker;
+  try {
+    const src = ['const f32 = Math.fround, MAXF = 3.4028234663852886e38, THIRD = f32(0.333333333);',
+      rbBall, rbFilter3, rbSmooth, rbShrink, rbRoll, rbInterp, rbEnlarge, rollingBall, medianFilter, sizeFilter, maskOf, baHandle].map(String).join('\n') +
+      '\nconst store = new Map();\nself.onmessage = e => { const d = e.data; try { const r = baHandle(d, store); self.postMessage(Object.assign({ rid: d.rid }, r.res), r.transfer); } catch (err) { self.postMessage({ rid: d.rid, error: String((err && err.message) || err) }); } };';
+    baWorker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+    baWorker.onmessage = e => { const j = baJobs.get(e.data.rid); if (!j) return; baJobs.delete(e.data.rid); if (e.data.error) j.reject(new Error(e.data.error)); else j.resolve(e.data); };
+    baWorker.onerror = e => {
+      if (e && e.preventDefault) e.preventDefault();
+      baWorkerOff = true; baWorker = null; ba.cache = null; ba.mask = null;
+      for (const j of baJobs.values()) j.reject(new Error('worker')); baJobs.clear();
+    };
+  } catch (err) { baWorkerOff = true; baWorker = null; }
+  return baWorker;
+}
+async function baCall(msg, transfer) {
+  const wk = baWorkerGet();
+  if (wk) {
+    try {
+      return await new Promise((resolve, reject) => { const rid = ++baReq; baJobs.set(rid, { resolve, reject }); wk.postMessage({ ...msg, rid }, transfer || []); });
+    } catch (err) { if (!baWorkerOff) throw err; }
+  }
+  await tick();
+  return baHandle(msg, baLocal).res;
+}
+const baDrop = sid => { if (sid) baCall({ type: 'drop', sid }).catch(() => {}); };
+// Same result as projectChannel(img, c, 0, proj, 0, nZ - 1), but yields between slices.
+async function baProject(img, c, proj) {
+  const n = img.width * img.height, Z = img.nZ, get = z => img.planes[pIdx(img, c, z, 0)], big = n > 1e6;
+  if (Z <= 1) return get(0);
+  if (proj === 'max') {
+    const out = get(0).slice();
+    for (let z = 1; z < Z; z++) { const d = get(z); for (let i = 0; i < n; i++) if (d[i] > out[i]) out[i] = d[i]; if (big) await tick(); }
+    return out;
+  }
+  const acc = new Float64Array(n);
+  for (let z = 0; z < Z; z++) { const d = get(z); for (let i = 0; i < n; i++) acc[i] += d[i]; if (big) await tick(); }
+  const out = new Float32Array(n);
+  if (proj === 'sum') for (let i = 0; i < n; i++) out[i] = acc[i];
+  else for (let i = 0; i < n; i++) out[i] = acc[i] / Z;
+  return out;
+}
+// Processes one image with the given settings; returns { raw, w, mn, mx, sid }.
+async function baProcess(img, set) {
+  const raw = await baProject(img, set.ch, set.proj), sid = ++baSidSeq, copy = raw.slice();
+  const r = await baCall({ type: 'proc', sid, raw: copy, W: img.width, H: img.height, rad: set.rad, med: set.med }, [copy.buffer]);
+  return { raw, w: r.w, mn: r.mn, mx: r.mx, sid };
+}
+
+let baImgSeq = 0;
+const baImgId = img => img.__baId || (img.__baId = ++baImgSeq);
+const baKeyNow = () => `${ba.ch}|${ba.proj}|${ba.rad}|${ba.med}`;
+const baCacheOk = () => !!ba.cache && ba.cache.img === state.img && ba.cache.key === baKeyNow();
+const baMaskKey = () => ba.cache ? `${ba.cache.sid}|${ba.thr}|${baMinPx(ba.cache.img, ba.minA)}` : '';
+const baMaskOk = () => baCacheOk() && !!ba.mask && ba.mask.key === baMaskKey();
+async function baCurrent() {
+  const img = state.img;
+  if (ba.ch >= img.nC) ba.ch = 0;
+  const key = baKeyNow();
+  if (baCacheOk()) return ba.cache;
+  if (ba.pending && ba.pending.img === img && ba.pending.key === key) return ba.pending.p;
+  const job = { img, key };
+  job.p = (async () => {
+    try {
+      const r = await baProcess(img, { ch: ba.ch, proj: ba.proj, rad: ba.rad, med: ba.med });
+      if (state.img !== img || baKeyNow() !== key) { baDrop(r.sid); return null; }
+      if (ba.cache) baDrop(ba.cache.sid);
+      ba.mask = null;
+      return (ba.cache = { img, key, ...r });
+    } finally { if (ba.pending === job) ba.pending = null; }
+  })();
+  ba.pending = job;
+  return job.p;
+}
+// Asks the worker for the positive mask of the current image; only one request at a time,
+// and the latest threshold wins.
+async function baEnsureMask() {
+  if (!baCacheOk() || ba.thr == null) return;
+  if (baMaskOk()) return;
+  if (ba.maskBusy) { ba.maskAgain = true; return; }
+  ba.maskBusy = true;
+  const c = ba.cache, key = baMaskKey();
+  try {
+    const r = await baCall({ type: 'mask', sid: c.sid, thr: ba.thr, minPx: baMinPx(c.img, ba.minA) });
+    if (ba.cache === c) ba.mask = { key, m: r.mask };
+  } finally { ba.maskBusy = false; }
+  if (ba.maskAgain) { ba.maskAgain = false; await baEnsureMask(); }
+}
+function baDefaultThr(c) {
+  const { w, mn, mx } = c, span = mx - mn;
+  if (!(span > 0)) return mn;
+  const hist = new Float64Array(256), sc = 256 / span;
+  for (let i = 0; i < w.length; i++) { let b = ((w[i] - mn) * sc) | 0; if (b < 0) b = 0; else if (b > 255) b = 255; hist[b]++; }
+  const t = mn + (binThreshold(hist, 'default') + 1) * span / 256;
+  return baIsInt(w) ? Math.round(t) : t;
+}
 function baRegions(shapes) {
   const out = []; let k = 0;
   for (const s of shapes) {
@@ -3604,71 +3850,68 @@ function baRegions(shapes) {
   }
   return out;
 }
-// Every image of the open file: the series of a LIF project, or the single open image.
 function baImages() {
   const img = state.img, L = baLif(); if (!img) return [];
   if (L) return L.series.map((s, i) => ({ id: i, name: s.name, problem: s.problem, current: i === L.current, key: `${L.fileName}|${i + 1}`,
     regs: baRegions(i === L.current ? state.shapes : (L.annots[i] && L.annots[i].shapes) || []) }));
   return [{ id: 0, name: img.name, problem: null, current: true, key: `${img.name}|0`, regs: baRegions(state.shapes) }];
 }
-function baSettingsText() {
-  const img = state.img, ch = img && img.channels[ba.ch];
-  return `kanal ${ba.ch + 1}${ch ? ` (${ch.name})` : ''}, ${BA_PROJ[ba.proj].toLocaleLowerCase('tr')} projeksiyon, rolling ball ${ba.rad > 0 ? `${fmtNum(ba.rad)} px` : 'yok'}, eşik ${ba.thr == null ? '–' : fmtNum(ba.thr)}`;
-}
-function baProcess(img, c, proj, rad) {
-  const raw = img.nZ > 1 ? projectChannel(img, c, 0, proj, 0, img.nZ - 1) : img.planes[pIdx(img, c, 0, 0)];
-  return { raw, w: rad > 0 ? rollingBall(raw, img.width, img.height, rad) : raw };
-}
-function baCurrent() {
-  const img = state.img;
-  if (ba.ch >= img.nC) ba.ch = 0;
-  const key = `${ba.ch}|${ba.proj}|${ba.rad}`;
-  if (ba.cache && ba.cache.img === img && ba.cache.key === key) return ba.cache;
-  const { raw, w } = baProcess(img, ba.ch, ba.proj, ba.rad);
-  let mn = Infinity, mx = -Infinity;
-  for (let i = 0; i < w.length; i++) { const v = w[i]; if (v < mn) mn = v; if (v > mx) mx = v; }
-  if (!(mn <= mx)) { mn = 0; mx = 1; }
-  return (ba.cache = { img, key, raw, w, mn, mx });
-}
-function baDefaultThr(c) {
-  const { w, mn, mx } = c, span = mx - mn;
-  if (!(span > 0)) return mn;
-  const hist = new Float64Array(256), sc = 256 / span;
-  for (let i = 0; i < w.length; i++) { let b = ((w[i] - mn) * sc) | 0; if (b < 0) b = 0; else if (b > 255) b = 255; hist[b]++; }
-  const t = mn + (binThreshold(hist, 'default') + 1) * span / 256;
-  return baIsInt(w) ? Math.round(t) : t;
-}
-function baMeasure(img, raw, w, regs, T) {
+function baMeasure(img, raw, w, m, regs) {
   const W = img.width, H = img.height, pw = img.calib ? img.calib.pw : 1;
   return regs.map(r => {
     const sp = roiSpans(r.s, W, H); let n = 0, pos = 0, sum = 0, sumRaw = 0;
     for (let k = 0; k < sp.length; k += 3) {
       const row = sp[k] * W;
-      for (let x = sp[k + 1]; x <= sp[k + 2]; x++) { const i = row + x, v = w[i]; n++; sum += v; sumRaw += raw[i]; if (v >= T) pos++; }
+      for (let x = sp[k + 1]; x <= sp[k + 2]; x++) { const i = row + x; n++; sum += w[i]; sumRaw += raw[i]; pos += m[i]; }
     }
     return { name: r.name, n, pos, area: n * pw * pw, posArea: pos * pw * pw, frac: n ? 100 * pos / n : null, mean: n ? sum / n : null, rawMean: n ? sumRaw / n : null };
   });
 }
-function baRadNote() {
+function baAreaUnit() { const c = state.img && state.img.calib; return c ? `${c.unit}²` : 'px²'; }
+function baSettingsText(s = ba) {
+  const img = state.img, ch = img && img.channels[s.ch];
+  const parts = [`kanal ${s.ch + 1}${ch ? ` (${ch.name})` : ''}`, `${BA_PROJ[s.proj].toLocaleLowerCase('tr')} projeksiyon`,
+    `rolling ball ${s.rad > 0 ? `${fmtNum(s.rad)} px` : 'yok'}`, `medyan ${s.med > 0 ? `${fmtNum(s.med)} px` : 'yok'}`,
+    `eşik ${s.thr == null ? '–' : fmtNum(s.thr)}`, `en küçük parça ${s.minA > 0 ? `${fmtNum(s.minA)} ${baAreaUnit()}` : 'yok'}`];
+  return parts.join(', ');
+}
+function baNotes() {
   const c = state.img && state.img.calib;
   $('#baRadNote').textContent = ba.rad > 0
     ? `Yarıçap, en büyük hücrenin yarıçapından büyük olmalı.${c ? ` Bu görüntüde ${fmtNum(ba.rad)} px yaklaşık ${fmtNum(ba.rad * c.pw)} ${c.unit} eder.` : ''} 0 girerseniz arka plan çıkarılmaz.`
     : 'Arka plan çıkarılmıyor; eşik projeksiyonun ham değerlerine uygulanır.';
+  $('#baMedNote').textContent = ba.med > 0
+    ? `Eşikten önce tek tük parlak gürültü piksellerini bastırır. Genellikle 1–2 px kullanılır. 0 girerseniz filtre uygulanmaz.`
+    : 'Medyan filtresi uygulanmıyor. Genellikle 1–2 px kullanılır.';
+  $('#baMinUnit').textContent = baAreaUnit();
+  $('#baMinNote').textContent = ba.minA > 0
+    ? `Eşiği geçen ve ${fmtNum(ba.minA)} ${baAreaUnit()} alandan küçük lekeler sayılmaz. Köşeden değen pikseller aynı parça sayılır. 0 girerseniz bütün pozitif pikseller sayılır.`
+    : 'Bütün pozitif pikseller sayılıyor. Küçük lekeleri atmak için bir alan girin.';
 }
 function baSyncThr() {
   const c = ba.cache, rg = $('#baThr'), nb = $('#baThrN');
-  if (!c || c.img !== state.img || ba.thr == null) return;
+  if (!baCacheOk()) {
+    if (document.activeElement !== nb) nb.value = ba.thr == null ? '' : String(+(+ba.thr).toPrecision(6));
+    rg.disabled = true; nb.disabled = ba.locked;
+    $('#baInfo').textContent = ba.pending ? 'Önizleme hazırlanıyor…'
+      : !ba.prev ? 'Kaydırıcıyı kullanmak ve eşiğin bu görüntüde neyi seçtiğini görmek için önizlemeyi açın.'
+      : '';
+    return;
+  }
+  rg.disabled = ba.locked;
+  if (ba.thr == null) return;
   const isInt = baIsInt(c.w);
   rg.min = String(Math.min(c.mn, ba.thr)); rg.max = String(Math.max(c.mx, ba.thr));
   rg.step = isInt ? '1' : String((c.mx - c.mn) / 1000 || 0.001);
   rg.value = String(ba.thr);
   nb.step = isInt ? '1' : 'any';
   if (document.activeElement !== nb) nb.value = String(+(+ba.thr).toPrecision(6));
-  $('#baInfo').textContent = `Bu görüntüde ${ba.rad > 0 ? 'arka planı çıkarılmış ' : ''}değerler ${fmtVal(c.mn, isInt)} ile ${fmtVal(c.mx, isInt)} arasında. Eşiğe eşit ya da büyük pikseller pozitif sayılır.`;
+  $('#baInfo').textContent = `Bu görüntüde işlenmiş değerler ${fmtVal(c.mn, isInt)} ile ${fmtVal(c.mx, isInt)} arasında. Eşiğe eşit ya da büyük pikseller pozitif sayılır.`;
 }
 function baApplyLock() {
   const on = ba.locked;
-  ['#baCh', '#baProj', '#baRad', '#baThr', '#baThrN'].forEach(s => { $(s).disabled = on; });
+  ['#baCh', '#baProj', '#baRad', '#baMed', '#baThrN', '#baMin'].forEach(s => { $(s).disabled = on; });
+  $('#baThr').disabled = on || !baCacheOk();
   const b = $('#baLock');
   b.textContent = on ? 'Ayarları değiştir' : 'Ayarları onayla';
   b.classList.toggle('primary', !on);
@@ -3681,9 +3924,14 @@ function baStepDone(n, on) {
 }
 function baRenderCurrent() {
   const img = state.img, c = ba.cache, regs = img ? baRegions(state.shapes) : [];
-  $('#baCurEmpty').hidden = regs.length > 0; $('#baCurWrap').hidden = !regs.length;
-  if (!regs.length || !c || c.img !== img || ba.thr == null) return;
-  const res = baMeasure(img, c.raw, c.w, regs, ba.thr), u = baUnit(img);
+  const ready = !!img && ba.prev && baMaskOk();
+  const empty = $('#baCurEmpty');
+  empty.textContent = !regs.length ? 'Bu görüntüde ölçülecek bölge yok.'
+    : !ba.prev ? 'Önizlemeyi açınca bu görüntüdeki bölgelerin sonucu burada görünür.' : 'Hesaplanıyor…';
+  if (!ready && regs.length && ba.prev && !$('#baCurWrap').hidden) return;   // keep the last table while a new mask is computed
+  empty.hidden = regs.length > 0 && ready; $('#baCurWrap').hidden = !regs.length || !ready;
+  if (!regs.length || !ready) return;
+  const res = baMeasure(img, c.raw, c.w, ba.mask.m, regs), u = baUnit(img);
   const thead = $('#baCurTable thead'), tbody = $('#baCurTable tbody');
   thead.textContent = ''; tbody.textContent = '';
   thead.append(el('tr', {}, el('th', { text: 'Bölge' }), el('th', { text: 'Pozitif %' }), el('th', { text: `Pozitif alan (${u}²)` }), el('th', { text: `Alan (${u}²)` }), el('th', { text: 'Ort. yoğunluk' })));
@@ -3699,15 +3947,28 @@ function baRenderCurrent() {
   tbody.append(frag);
 }
 function baRenderPreview() {
-  const img = state.img, c = ba.cache;
-  const show = !!img && !!c && c.img === img && $('#secBatch').open && ba.prev && ba.thr != null;
-  if (!show) { if (baPrevOn) { baPrevOn = false; requestDraw(); } return; }
-  const W = img.width, H = img.height, n = W * H, w = c.w, T = ba.thr;
-  if (baPrevCv.width !== W || baPrevCv.height !== H || !baPrevData) { baPrevCv.width = W; baPrevCv.height = H; baPrevData = baPrevCv.getContext('2d').createImageData(W, H); }
-  const px = baPrevData.data; px.fill(0);
-  for (let i = 0; i < n; i++) if (w[i] >= T) { const j = i * 4; px[j] = 255; px[j + 1] = 45; px[j + 2] = 45; px[j + 3] = 130; }
+  const img = state.img;
+  const want = !!img && $('#secBatch').open && ba.prev && baCacheOk() && ba.thr != null;
+  if (!want) { if (baPrevOn) { baPrevOn = false; ba.prevKey = ''; requestDraw(); } return; }
+  if (!baMaskOk()) return;   // keep the previous overlay until the new mask arrives
+  const key = `${baImgId(img)}|${ba.mask.key}`;
+  if (baPrevOn && ba.prevKey === key) return;
+  // Large images get a coarser overlay (at most about 4 million pixels) to keep memory low.
+  const W = img.width, H = img.height, m = ba.mask.m, f = Math.max(1, Math.ceil(Math.sqrt(W * H / 4e6)));
+  const pW = Math.ceil(W / f), pH = Math.ceil(H / f);
+  if (baPrevCv.width !== pW || baPrevCv.height !== pH || !baPrevData) { baPrevCv.width = pW; baPrevCv.height = pH; baPrevData = baPrevCv.getContext('2d').createImageData(pW, pH); }
+  const px = new Uint32Array(baPrevData.data.buffer); px.fill(0);
+  if (f === 1) {
+    const col = ((130 << 24) | (45 << 16) | (45 << 8) | 255) >>> 0;
+    for (let i = 0, n = W * H; i < n; i++) if (m[i]) px[i] = col;
+  } else {
+    const cnt = new Uint16Array(pW * pH);
+    for (let y = 0; y < H; y++) { const oy = ((y / f) | 0) * pW, row = y * W; for (let x = 0; x < W; x++) if (m[row + x]) cnt[oy + ((x / f) | 0)]++; }
+    const full = f * f;
+    for (let o = 0; o < cnt.length; o++) if (cnt[o]) px[o] = ((Math.round(130 * Math.min(1, cnt[o] / full)) << 24) | (45 << 16) | (45 << 8) | 255) >>> 0;
+  }
   baPrevCv.getContext('2d').putImageData(baPrevData, 0, 0);
-  baPrevOn = true; requestDraw();
+  baPrevOn = true; ba.prevKey = key; requestDraw();
 }
 function baRenderList(items) {
   const box = $('#baList'), L = baLif(), now = baSig(ba), done = new Map();
@@ -3754,35 +4015,50 @@ function baRenderSteps(list = true) {
   $('#st4s').textContent = mine.length ? `${new Set(mine.map(r => r.key)).size} görüntü bitti` : '';
   projBadges();
 }
+// A cheap fingerprint of everything the panel depends on, so that zooming, panning or
+// moving the Z slider does not rebuild it.
+function baViewSig() {
+  const L = state.lif, img = state.img;
+  return [img ? baImgId(img) : 0, JSON.stringify(state.shapes), L ? L.current : -1,
+    L ? Object.keys(L.annots).map(k => `${k}:${L.annots[k].shapes.length}`).join(',') : '',
+    [...ba.sel].join(','), ba.locked, ba.rev, baKeyNow(), ba.minA, ba.thr].join('|');
+}
+async function baView() {
+  try { await baEnsureMask(); } catch (err) { console.error(err); }
+  baRenderCurrent(); baRenderPreview(); baRenderSteps(false);
+}
 async function baRefresh() {
   const img = state.img;
   if (!img || ba.running) return;
-  baApplyLock(); baRenderSteps();
-  if (!$('#secBatch').open) { baRenderPreview(); return; }
-  if (ba.ch >= img.nC) ba.ch = 0;
-  const key = `${ba.ch}|${ba.proj}|${ba.rad}`, fresh = !(ba.cache && ba.cache.img === img && ba.cache.key === key);
-  const slow = fresh && img.width * img.height > 3e6;
-  if (slow) { busy(true, 'Arka plan çıkarılıyor…'); await paint(); }
-  try { baCurrent(); }
-  catch (err) { console.error(err); toast(err instanceof RangeError ? 'Bu görüntü için bellek yetmedi.' : 'Görüntü işlenemedi.'); return; }
-  finally { if (slow) busy(false); }
-  if (state.img !== img) return;
-  if (ba.thr == null) { ba.thr = baDefaultThr(ba.cache); baStore(); }
-  baSyncThr(); baRenderCurrent(); baRenderPreview(); baRenderSteps(false);
+  const sig = baViewSig();
+  if (sig !== ba.lastSig) { ba.lastSig = sig; baApplyLock(); baRenderSteps(); baRenderCurrent(); }
+  if (!$('#secBatch').open || !ba.prev) { baSyncThr(); baRenderPreview(); baRenderCurrent(); return; }
+  if (!baCacheOk()) {
+    baSyncThr(); baRenderCurrent();
+    let c;
+    try { c = await baCurrent(); }
+    catch (err) { console.error(err); toast(err instanceof RangeError ? 'Bu görüntü için bellek yetmedi.' : 'Görüntü işlenemedi.'); baSyncThr(); return; }
+    if (!c || state.img !== img) { baSyncThr(); return; }
+    if (ba.thr == null) { ba.thr = baDefaultThr(c); baStore(); }
+    baApplyLock(); baSyncThr();
+  }
+  await baView();
 }
 function baSchedule() { clearTimeout(ba.timer); ba.timer = setTimeout(baRefresh, 120); }
 function baInit() {
   const img = state.img; if (!img) return;
-  ba.cache = null; baPrevOn = false;
+  if (ba.cache) baDrop(ba.cache.sid);
+  ba.cache = null; ba.mask = null; ba.pending = null; baPrevOn = false; ba.prevKey = ''; ba.lastSig = '';
+  $('#baCurWrap').hidden = true;
   const sel = $('#baCh'); sel.textContent = '';
   img.channels.forEach((ch, c) => sel.append(el('option', { value: String(c), text: `${c + 1}: ${ch.name}` })));
   if (ba.ch >= img.nC) { ba.ch = 0; ba.thr = null; ba.locked = false; }
   sel.value = String(ba.ch);
-  $('#baProj').value = ba.proj; $('#baRad').value = String(ba.rad);
+  $('#baProj').value = ba.proj; $('#baRad').value = String(ba.rad); $('#baMed').value = String(ba.med); $('#baMin').value = String(ba.minA);
   $('#baPrev').checked = ba.prev; $('#baQC').checked = ba.qcOn;
-  baRadNote(); baApplyLock(); baRenderResults(); baSchedule();
+  baNotes(); baApplyLock(); baRenderResults(); baSchedule();
 }
-async function baQCPng(img, w, regs, set, label) {
+async function baQCPng(img, w, m, regs, set, label) {
   const W = img.width, H = img.height, b = Math.max(1, Math.ceil(Math.max(W, H) / 2000));
   const oW = Math.ceil(W / b), oH = Math.ceil(H / b), n = oW * oH, isInt = baIsInt(w);
   let mn = Infinity, mx = -Infinity;
@@ -3794,7 +4070,7 @@ async function baQCPng(img, w, regs, set, label) {
     for (let x = 0; x < W; x++) {
       const o = oy + ((x / b) | 0), v = w[row + x];
       let t = (v - lo) / span; t = t < 0 ? 0 : t > 1 ? 1 : t;
-      g[o] += t; cnt[o]++; if (v >= set.thr) f[o]++;
+      g[o] += t; cnt[o]++; f[o] += m[row + x];
     }
   }
   const cv = document.createElement('canvas'); cv.width = oW; cv.height = oH;
@@ -3812,14 +4088,14 @@ async function baQCPng(img, w, regs, set, label) {
   cx.lineWidth = Math.max(3, fs / 4); cx.strokeStyle = 'rgba(0,0,0,0.8)';
   cx.fillStyle = '#FFD21F';
   regs.forEach(r => { const bx = shapeBox(r.s), tx = bx[0] / b, ty = Math.min(oH - fs - 2, bx[3] / b + 4); cx.strokeText(r.name, tx, ty); cx.fillText(r.name, tx, ty); });
-  const caps = [label, `eşik ${fmtVal(set.thr, isInt)}, ${BA_PROJ[set.proj].toLocaleLowerCase('tr')} projeksiyon, rolling ball ${set.rad > 0 ? `${fmtNum(set.rad)} px` : 'yok'}`];
+  const caps = [label, baSettingsText(set)];
   let cy = 8;
   cx.fillStyle = '#FFFFFF';
   for (const t of caps) {
-    let f = fs; cx.font = `600 ${f}px ${FONT}`;
+    let fz = fs; cx.font = `600 ${fz}px ${FONT}`;
     const tw = cx.measureText(t).width;
-    if (tw > oW - 16) { f = Math.max(9, Math.floor(f * (oW - 16) / tw)); cx.font = `600 ${f}px ${FONT}`; }
-    cx.lineWidth = Math.max(3, f / 4); cx.strokeText(t, 8, cy); cx.fillText(t, 8, cy); cy += f * 1.25;
+    if (tw > oW - 16) { fz = Math.max(9, Math.floor(fz * (oW - 16) / tw)); cx.font = `600 ${fz}px ${FONT}`; }
+    cx.lineWidth = Math.max(3, fz / 4); cx.strokeText(t, 8, cy); cx.fillText(t, 8, cy); cy += fz * 1.25;
   }
   const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
   return new Uint8Array(await blob.arrayBuffer());
@@ -3832,43 +4108,45 @@ async function baRun() {
     ? { i: it.id, s: L.series[it.id], regs: it.regs, file: L.fileName, series: it.id + 1, sName: it.name }
     : { i: -1, s: null, regs: it.regs, file: cur.name, series: 0, sName: '-' });
   if (!jobs.length) { toast('Analiz için görüntü seçin.'); return; }
-  const set = { ch: ba.ch, proj: ba.proj, rad: ba.rad, thr: ba.thr }, out = [], qc = [];
+  const set = { ch: ba.ch, proj: ba.proj, rad: ba.rad, med: ba.med, minA: ba.minA, thr: ba.thr }, out = [], qc = [];
   ba.running = true; seriesLoading = true; $('#baRun').disabled = true;
   try {
     for (let k = 0; k < jobs.length; k++) {
       const j = jobs[k], label = j.sName !== '-' ? j.sName : j.file, step = `Analiz ediliyor ${k + 1}/${jobs.length}`;
       busy(true, `${step}…`); await paint();
       const base = { key: `${j.file}|${j.series}`, file: j.file, series: j.series, sName: j.sName, ...set };
+      let sid = 0;
       try {
         let img;
         if (j.i < 0 || (L && j.i === L.current)) img = cur;
         else if (j.s.problem) throw new Error(j.s.problem);
         else img = finalizeImage(await LL.readSeries(L, j.s, async f => { busy(true, `${step}, okunuyor %${Math.round(f * 100)}`); await tick(); }));
         if (set.ch >= img.nC) throw new Error(`kanal ${set.ch + 1} yok, görüntüde ${img.nC} kanal var`);
-        busy(true, `${step}, ölçülüyor…`); await paint();
-        const { raw, w } = baProcess(img, set.ch, set.proj, set.rad);
+        busy(true, `${step}, işleniyor…`);
+        const p = await baProcess(img, set); sid = p.sid;
+        const mk = await baCall({ type: 'mask', sid, thr: set.thr, minPx: baMinPx(img, set.minA) });
         const pw = img.calib ? img.calib.pw : 1, unit = baUnit(img), chName = img.channels[set.ch].name;
-        baMeasure(img, raw, w, j.regs, set.thr).forEach(r => out.push({ ...base, roi: r.name, area: r.area, posArea: r.posArea, frac: r.frac, mean: r.mean, rawMean: r.rawMean, unit, pw, chName, status: 'tamam' }));
+        baMeasure(img, p.raw, p.w, mk.mask, j.regs).forEach(r => out.push({ ...base, roi: r.name, area: r.area, posArea: r.posArea, frac: r.frac, mean: r.mean, rawMean: r.rawMean, unit, pw, chName, status: 'tamam' }));
         if (ba.qcOn) {
           const nm = safePart(j.file.replace(/\.[^.]+$/, '')) + (j.sName !== '-' ? `_${safePart(j.sName)}` : '') + '.png';
-          qc.push({ key: base.key, name: nm, data: await baQCPng(img, w, j.regs, set, label) });
+          qc.push({ key: base.key, name: nm, data: await baQCPng(img, p.w, mk.mask, j.regs, set, label) });
         }
       } catch (err) {
         console.error(err);
         out.push({ ...base, roi: '', area: null, posArea: null, frac: null, mean: null, rawMean: null, unit: '', pw: null, chName: '', status: err instanceof RangeError ? 'bellek yetmedi' : (err && err.message) || 'okunamadı' });
-      }
+      } finally { baDrop(sid); }
       await tick();
     }
   } finally { ba.running = false; seriesLoading = false; busy(false); }
   const keys = new Set(out.map(r => r.key));
   ba.results = ba.results.filter(r => !keys.has(r.key)).concat(out);
   keys.forEach(k => ba.qc.delete(k)); qc.forEach(q => ba.qc.set(q.key, q));
-  baRenderResults(); baRenderSteps(); psSchedule();
+  ba.rev++; baRenderResults(); baRenderSteps(); psSchedule();
   const bad = out.filter(r => r.status !== 'tamam').length;
   toast(`${jobs.length} görüntü analiz edildi${bad ? `, ${bad} tanesi ölçülemedi` : ''}.`);
 }
 function baRenderResults() {
-  const R = ba.results;
+  const R = ba.results, L = state.lif;
   $('#baResWrap').hidden = !R.length;
   $('#baCsv').hidden = !canSave; $('#baZip').hidden = !canSave || !ba.qc.size;
   if (!R.length) return;
@@ -3879,13 +4157,15 @@ function baRenderResults() {
   const frag = document.createDocumentFragment();
   R.forEach(r => {
     const ok = r.status === 'tamam', nm = r.sName !== '-' ? r.sName.slice(r.sName.lastIndexOf('/') + 1) : r.file;
-    frag.append(el('tr', {}, el('td', { text: nm }), el('td', { text: ok ? r.roi : r.status }),
+    const canOpen = !!L && r.file === L.fileName && r.series >= 1 && L.series[r.series - 1] && L.current !== r.series - 1;
+    frag.append(el('tr', { title: canOpen ? 'Görüntüyü aç' : '', onclick: canOpen ? () => loadLIFSeries(L, r.series - 1) : null },
+      el('td', { text: nm }), el('td', { text: ok ? r.roi : r.status }),
       el('td', { text: ok && r.frac != null ? r.frac.toFixed(2) : '–' }), el('td', { text: ok ? fmtMeas(r.posArea) : '–' }), el('td', { text: ok ? fmtMeas(r.area) : '–' })));
   });
   tbody.append(frag);
   const sigs = new Set(R.map(baSig));
   const nImg = new Set(R.map(r => r.key)).size, bad = R.filter(r => r.status !== 'tamam').length;
-  let note = `${nImg} görüntüde ${R.length - bad} bölge ölçüldü.`;
+  let note = `${nImg} görüntüde ${R.length - bad} bölge ölçüldü. Bir satıra basınca o görüntü açılır ve önizlemede görebilirsiniz.`;
   if (bad) note += ` ${bad} görüntü ölçülemedi, nedeni Bölge sütununda yazıyor.`;
   if (sigs.size > 1) note += ' Tablodaki satırlar farklı ayarlarla hesaplandı; karşılaştırmadan önce hepsini aynı ayarlarla yeniden analiz edin.';
   else if (!sigs.has(baSig(ba))) note += ' Ayarlar bu sonuçlardan sonra değişti; yeni ayarlarla sonuç için yeniden analiz edin.';
@@ -3898,20 +4178,23 @@ function baBase() {
   if (files.size !== 1) return 'lamel';
   return [...files][0].replace(/\.[^.]+$/, '').replace(/[\\/:*?"<>|]+/g, '_').trim() || 'lamel';
 }
-function baThrChanged() { baStore(); baSyncThr(); baRenderCurrent(); baRenderPreview(); baRenderSteps(false); }
-$('#secBatch').addEventListener('toggle', () => { if ($('#secBatch').open) { renderFiji(); baRefresh(); } else baRenderPreview(); });
-$('#baCh').addEventListener('change', e => { ba.ch = +e.target.value; ba.thr = null; ba.cache = null; baStore(); baSchedule(); });
-$('#baProj').addEventListener('change', e => { ba.proj = e.target.value; ba.thr = null; ba.cache = null; baStore(); baSchedule(); });
-$('#baRad').addEventListener('change', e => {
-  let v = parseFloat(String(e.target.value).replace(',', '.'));
-  if (!Number.isFinite(v) || v < 0) v = 0;
-  ba.rad = v; e.target.value = String(v); ba.cache = null; baStore(); baRadNote(); baSchedule();
-});
+function baThrChanged() {
+  baStore(); baSyncThr();
+  if (ba.frame) return;
+  ba.frame = requestAnimationFrame(() => { ba.frame = 0; baView(); });
+}
+const baNum = (v, min = 0) => { const x = parseFloat(String(v).replace(',', '.')); return Number.isFinite(x) && x >= min ? x : min; };
+$('#secBatch').addEventListener('toggle', () => { if ($('#secBatch').open) { renderFiji(); ba.lastSig = ''; baRefresh(); } else baRenderPreview(); });
+$('#baCh').addEventListener('change', e => { ba.ch = +e.target.value; ba.thr = null; baStore(); baSchedule(); });
+$('#baProj').addEventListener('change', e => { ba.proj = e.target.value; ba.thr = null; baStore(); baSchedule(); });
+$('#baRad').addEventListener('change', e => { ba.rad = baNum(e.target.value); e.target.value = String(ba.rad); baStore(); baNotes(); baSchedule(); });
+$('#baMed').addEventListener('change', e => { ba.med = baNum(e.target.value); e.target.value = String(ba.med); baStore(); baNotes(); baSchedule(); });
+$('#baMin').addEventListener('change', e => { ba.minA = baNum(e.target.value); e.target.value = String(ba.minA); baStore(); baNotes(); baSchedule(); });
 $('#baThr').addEventListener('input', e => { ba.thr = +e.target.value; baThrChanged(); });
 $('#baThrN').addEventListener('change', e => {
   const v = parseFloat(String(e.target.value).replace(',', '.'));
   if (!Number.isFinite(v)) { baSyncThr(); return; }
-  ba.thr = ba.cache && baIsInt(ba.cache.w) ? Math.round(v) : v; baThrChanged();
+  ba.thr = baCacheOk() && baIsInt(ba.cache.w) ? Math.round(v) : v; baThrChanged();
 });
 $('#baLock').addEventListener('click', () => {
   if (!ba.locked && (ba.thr == null || !Number.isFinite(ba.thr))) { toast('Önce eşiği ayarlayın.'); return; }
@@ -3920,17 +4203,17 @@ $('#baLock').addEventListener('click', () => {
 });
 $('#baAll').addEventListener('click', () => { baImages().forEach(it => { if (it.regs.length && !it.problem) ba.sel.add(it.id); }); psSchedule(); baRenderSteps(); });
 $('#baNone').addEventListener('click', () => { ba.sel.clear(); psSchedule(); baRenderSteps(); });
-$('#baPrev').addEventListener('change', e => { ba.prev = e.target.checked; baRenderPreview(); });
+$('#baPrev').addEventListener('change', e => { ba.prev = e.target.checked; baStore(); ba.lastSig = ''; baRefresh(); });
 $('#baQC').addEventListener('change', e => { ba.qcOn = e.target.checked; baStore(); });
 $('#baRun').addEventListener('click', () => { baRun().catch(err => { console.error(err); toast('Analiz tamamlanamadı.'); }); });
-$('#baClear').addEventListener('click', () => { ba.results = []; ba.qc.clear(); baRenderResults(); baRenderSteps(); psSchedule(); });
+$('#baClear').addEventListener('click', () => { ba.results = []; ba.qc.clear(); ba.rev++; baRenderResults(); baRenderSteps(); psSchedule(); });
 $('#baCsv').addEventListener('click', () => {
   const R = ba.results; if (!R.length) return;
   const num = v => v == null || !Number.isFinite(v) ? '' : +(+v).toPrecision(7);
-  const head = ['dosya', 'seri_no', 'seri_adi', 'bolge', 'bolge_alani', 'pozitif_alan', 'pozitif_alan_yuzdesi', 'ortalama_yogunluk', 'ham_ortalama', 'alan_birimi', 'kanal_no', 'kanal_adi', 'projeksiyon', 'rolling_ball_px', 'esik', 'piksel_boyutu', 'durum'];
+  const head = ['dosya', 'seri_no', 'seri_adi', 'bolge', 'bolge_alani', 'pozitif_alan', 'pozitif_alan_yuzdesi', 'ortalama_yogunluk', 'ham_ortalama', 'alan_birimi', 'kanal_no', 'kanal_adi', 'projeksiyon', 'rolling_ball_px', 'medyan_px', 'esik', 'en_kucuk_parca', 'piksel_boyutu', 'durum'];
   const lines = [head.join(',')];
   R.forEach(r => lines.push([r.file, r.series, r.sName, r.roi, num(r.area), num(r.posArea), num(r.frac), num(r.mean), num(r.rawMean),
-    r.unit ? `${r.unit.replace('µ', 'u')}2` : '', r.ch + 1, r.chName, BA_PROJ[r.proj], r.rad, num(r.thr), num(r.pw), r.status].map(csvEsc).join(',')));
+    r.unit ? `${r.unit.replace('µ', 'u')}2` : '', r.ch + 1, r.chName, BA_PROJ[r.proj], r.rad, r.med || 0, num(r.thr), r.minA || 0, num(r.pw), r.status].map(csvEsc).join(',')));
   saveFile(`${baBase()}_toplu_analiz.csv`, lines.join('\n') + '\n');
 });
 $('#baZip').addEventListener('click', () => {
@@ -3987,7 +4270,7 @@ $('#sbLabel').addEventListener('change', e => { state.sb.label = e.target.checke
 /* ---------- autosave (IndexedDB) ---------- */
 // Drawings, the image selection and results are kept per file (name + size) in this
 // browser, so reopening the same file continues where the user left off.
-const PS = { db: null, failed: false, key: null, name: '', kind: '', handle: null, timer: 0 };
+const PS = { db: null, failed: false, key: null, name: '', kind: '', handle: null, timer: 0, sig: '' };
 function psOpenDB() {
   if (PS.db || PS.failed) return Promise.resolve(PS.db);
   return new Promise(res => {
@@ -4045,13 +4328,23 @@ async function psSave() {
   let ok = await psPut(rec);
   if (!ok && rec.handle) { delete rec.handle; ok = await psPut(rec); }
 }
-function psSchedule() { if (!PS.key) return; clearTimeout(PS.timer); PS.timer = setTimeout(psSave, 600); }
+// Saves only when something worth keeping changed, not on every zoom or Z step.
+function psSig() {
+  const L = state.lif;
+  return JSON.stringify([state.shapes, state.points, state.counters, state.activeCounter, L ? L.current : 0,
+    L ? Object.keys(L.annots).map(k => `${k}:${L.annots[k].shapes.length}:${L.annots[k].points.length}`) : 0, [...ba.sel], ba.rev]);
+}
+function psSchedule() {
+  if (!PS.key) return;
+  const sig = psSig(); if (sig === PS.sig) return;
+  PS.sig = sig; clearTimeout(PS.timer); PS.timer = setTimeout(psSave, 600);
+}
 async function psFlush() { if (PS.timer) await psSave(); }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') psFlush(); });
 window.addEventListener('pagehide', () => { psFlush(); });
 // Called when a file is opened, before its image is shown. Returns the stored record, if any.
 async function psBegin(file, kind, handle) {
-  PS.key = null; PS.name = file ? file.name : ''; PS.kind = kind; PS.handle = handle || null;
+  PS.key = null; PS.sig = ''; PS.name = file ? file.name : ''; PS.kind = kind; PS.handle = handle || null;
   ba.sel = new Set(kind === 'img' ? [0] : []);
   if (!file) return null;
   const key = psKeyOf(file), rec = await psGet(key);
@@ -4484,7 +4777,20 @@ stage.addEventListener('drop', e => {
 
 /* ---------- keyboard ---------- */
 const TOOL_KEYS = { v: 'select', h: 'pan', m: 'point', b: 'pen', g: 'region', l: 'line', a: 'arrow', r: 'rect', o: 'ellipse', t: 'text', e: 'eraser' };
+/* ---------- help ---------- */
+const helpDlg = $('#helpDlg');
+function openHelp() {
+  if (typeof helpDlg.showModal === 'function') { if (!helpDlg.open) helpDlg.showModal(); }
+  else helpDlg.setAttribute('open', '');
+  helpDlg.querySelector('.help-b').scrollTop = 0;
+}
+function closeHelp() { if (typeof helpDlg.close === 'function') helpDlg.close(); else helpDlg.removeAttribute('open'); }
+['#helpBtn', '#helpBtn2', '#helpBtn3'].forEach(s => $(s).addEventListener('click', openHelp));
+$('#helpClose').addEventListener('click', closeHelp);
+helpDlg.addEventListener('click', e => { if (e.target === helpDlg) closeHelp(); });
+
 document.addEventListener('keydown', e => {
+  if (helpDlg.open) return;
   const tg = e.target, tag = (tg.tagName || '').toLowerCase();
   const typing = (tag === 'input' && !['range', 'checkbox', 'button', 'color'].includes(tg.type)) || tag === 'textarea' || tag === 'select';
   if ((e.ctrlKey || e.metaKey) && !e.altKey && !typing) {

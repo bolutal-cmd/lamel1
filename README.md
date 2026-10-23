@@ -39,8 +39,10 @@ Mikroskopi görüntülerini tarayıcıda açma, bölge çizme ve ölçme aracı.
 
 ## Güncelleme
 
-`index.html` dosyasını depoda değiştirmeniz yeterli; uygulama bir sonraki açılışta yeni sürümü alır. Simgeleri değiştirirseniz `sw.js` içindeki `VERSION` değerini artırın (örneğin `lamel-v2`).
+Yeni sürümde değişen dosyaları depoya yükleyin (GitHub’da **Add file › Upload files**). Aynı adlı dosyanın üstüne yazılır. GitHub birkaç dakika içinde siteyi yeniler; uygulama, internete bağlıyken bir sonraki açılışta yeni sürümü alır. Simgeleri değiştirirseniz `sw.js` içindeki `VERSION` değerini artırın.
 
 ## Analiz yöntemi
 
-Analiz bölümü her seçili görüntüde şu adımları uygular: seçilen kanal, bütün Z dilimlerinin projeksiyonu (maksimum, ortalama ya da toplam), arka plan çıkarma ve sabit eşik. Arka plan çıkarma, ImageJ’nin Subtract Background komutunun (rolling ball, varsayılan ayarlar) koduna dayanır ve ImageJ ile piksel piksel aynı sonucu verir. Eşiğe eşit ya da büyük pikseller pozitif sayılır.
+Analiz bölümü her seçili görüntüde şu adımları uygular: seçilen kanal, bütün Z dilimlerinin projeksiyonu (maksimum, ortalama ya da toplam), arka plan çıkarma (rolling ball), isteğe bağlı medyan filtresi, sabit eşik ve isteğe bağlı olarak belirli bir alandan küçük pozitif parçaların atılması. Eşiğe eşit ya da büyük pikseller pozitif sayılır; parçalar 8 komşulukla (köşeden değen pikseller aynı parça) belirlenir.
+
+Arka plan çıkarma ve medyan filtresi ImageJ’nin Subtract Background ve Median komutlarının koduna dayanır, parça filtresi Analyze Particles ile aynı sonucu verir. `fiji/Lamel_IBA1_alan.ijm` makrosu aynı adımları Fiji’de uygular; aynı ayarlarla iki programın sonuçları birebir aynı çıkar.
