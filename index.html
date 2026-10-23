@@ -278,6 +278,14 @@ dl{margin:0}
 .empty .btn:not(.primary){color:var(--ink)}
 .step .row{grid-template-columns:5.2em minmax(0,1fr) 4.8em}
 .step input[type=number]{box-sizing:border-box}
+.step .range-in select{flex:1;min-width:0}
+.hint.warn{color:#C2410C}
+@media (prefers-color-scheme:dark){.hint.warn{color:#FDBA74}}
+.ba-sugg{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.ba-sugg ul{list-style:none;margin:0;padding:0}
+.ba-sugg li{display:flex;justify-content:space-between;gap:8px;padding:2px 0;font-size:14px}
+.ba-sugg .ba-sv{font-variant-numeric:tabular-nums}
+.ba-sugg .hint{margin-top:6px}
 .ap-sum{margin:14px 0 0;font-weight:500;line-height:1.5}
 .intro{padding:16px;color:var(--muted);line-height:1.5;margin:0}
 .toast-host{position:fixed;left:0;right:0;bottom:0;padding:0 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;z-index:20}
@@ -381,7 +389,7 @@ body.has-img .no-img{display:none!important}
       <ol class="help-steps">
         <li><h3>Dosyayı açın</h3><p>Üst çubuktaki “Aç” düğmesine basın ya da dosyayı görüntü alanına sürükleyin. LIF dosyasındaki görüntüler Proje listesinde görünür; çalışacağınız görüntüye basın.</p></li>
         <li><h3>Bölgeleri çizin</h3><p>Üst çubuktan dikdörtgen, elips ya da serbest alan aracını seçin ve ölçmek istediğiniz bölgeyi (örneğin corpus callosum) çizin. Analiz bölümünün 1. adımında bölgeye ad verin. Yalnız işaret olarak çizdiğiniz bir şeklin “Ölç” kutusunun işaretini kaldırın. Bunu her görüntü için yapın; görüntüler arasında üst çubuktaki “Proje” düğmesiyle açılan listeden geçebilirsiniz.</p></li>
-        <li><h3>Ayarları yapın</h3><p>2. adımda IBA1 kanalını, projeksiyonu (genellikle Maksimum), rolling ball yarıçapını, medyanı ve en küçük parça boyutunu girin. Eşiği, kırmızı önizlemede yalnız IBA1 sinyali seçilecek şekilde ayarlayın. Eşiği her iki gruptan birkaç görüntüde kontrol edin.</p></li>
+        <li><h3>Ayarları yapın</h3><p>2. adımda IBA1 kanalını, projeksiyonu (genellikle Maksimum), rolling ball yarıçapını, medyanı ve en küçük parça boyutunu girin. Önizlemede analizin gördüğü işlenmiş görüntü ve pozitif sayılan pikseller (kırmızı) görünür. Eşiği yalnız IBA1 sinyali seçilecek şekilde ayarlayın. İsterseniz “Otomatik” satırından Otsu gibi bir yöntemle her iki gruptan birkaç görüntüde öneri alıp ortalamasını eşik yapın.</p></li>
         <li><h3>Ayarları onaylayın</h3><p>“Ayarları onayla”ya basın. Ayarlar kilitlenir ve bütün görüntülere aynı ayarlar uygulanır. Değiştirmeniz gerekirse “Ayarları değiştir”e basın.</p></li>
         <li><h3>Görüntüleri seçin</h3><p>3. adımda analiz edilecek görüntülerin kutusunu işaretleyin ya da “Hepsini seç”e basın. Bölgesi olmayan görüntüler seçilemez.</p></li>
         <li><h3>Analiz edin</h3><p>4. adımda “Seçili … görüntüyü analiz et”e basın. Sonuçlar tabloda görünür. Bir satıra basınca o görüntü açılır ve sonucu önizlemede kontrol edebilirsiniz.</p></li>
@@ -395,7 +403,7 @@ body.has-img .no-img{display:none!important}
         <li>Karşılaştıracağınız bütün görüntüleri aynı mikroskop ayarlarıyla ve aynı Z kalınlığıyla çekin.</li>
         <li>Bütün gruplara aynı ayarları uygulayın. Ayarları sonradan değiştirirseniz eski sonuçların yanında “eski ayarla” yazar; karşılaştırmadan önce hepsini yeniden analiz edin.</li>
         <li>Mümkünse bölgeleri ve eşiği, görüntünün hangi gruba ait olduğunu bilmeden belirleyin.</li>
-        <li>Önizleme büyük görüntülerde yavaşlarsa 2. adımdaki “Önizle” kutusunu kapatın; analizin sonucu bundan etkilenmez.</li>
+        <li>Önizleme büyük görüntülerde ya da tablette yavaşlarsa 2. adımdaki “Önizleme” seçeneğini “Kapalı” yapın; analizin sonucu bundan etkilenmez.</li>
       </ul>
       <h3 class="help-sec">Fiji ile doğrulama</h3>
       <p>Bölgeleri “ROI dosyası” bölümünden kaydedin ve Lamel ile birlikte gelen Fiji makrosunu (fiji/Lamel_IBA1_alan.ijm) aynı ayarlarla çalıştırın. İki programın sonuçları aynı çıkar.</p>
@@ -488,6 +496,8 @@ body.has-img .no-img{display:none!important}
           </li>
           <li class="step" id="st2">
             <div class="step-h"><span class="step-n">2</span><span class="step-t">Ayarları yapın</span><span class="step-s" id="st2s"></span></div>
+            <div class="row2"><label for="baView">Önizleme</label><select id="baView"><option value="proc">İşlenmiş + pozitif</option><option value="procOnly">Yalnız işlenmiş</option><option value="orig">Orijinal + pozitif</option><option value="off">Kapalı</option></select></div>
+            <p class="hint">İşlenmiş görüntü, analizin gördüğü görüntüdür: arka plan çıkarma ve medyanı değiştirdikçe değişir. Pozitif sayılan pikseller kırmızı görünür.</p>
             <div class="row2"><label for="baCh">Kanal</label><select id="baCh"></select></div>
             <div class="row2"><label for="baProj">Projeksiyon</label><select id="baProj"><option value="max">Maksimum</option><option value="mean">Ortalama</option><option value="sum">Toplam</option></select></div>
             <div class="row2"><label for="baRad">Arka plan</label><div class="range-in"><input type="number" id="baRad" min="0" step="any" style="width:6em"><span>px yarıçap</span></div></div>
@@ -496,9 +506,12 @@ body.has-img .no-img{display:none!important}
             <p class="hint" id="baMedNote"></p>
             <div class="row"><label for="baThr">Eşik</label><input type="range" id="baThr"><input type="number" id="baThrN" step="any" aria-label="Eşik değeri"></div>
             <p class="hint" id="baInfo"></p>
+            <div class="row2"><label for="baAuto">Otomatik</label><select id="baAuto"><option value="otsu">Otsu</option><option value="triangle">Triangle</option><option value="li">Li</option><option value="default">Default (IsoData)</option><option value="mean">Mean</option></select></div>
+            <div class="btns"><button class="btn sm" id="baAutoBtn" type="button">Bu görüntüden eşik öner</button></div>
+            <p class="hint">Otomatik yöntem her görüntüde farklı bir değer verir. Gruplar arasında karşılaştırma için bütün görüntülere tek bir sabit eşik uygulanır: her iki gruptan birkaç görüntüde öneri alın ve ortalamasını kullanın.</p>
+            <div class="ba-sugg" id="baSugg" hidden><ul id="baSuggList"></ul><p class="hint" id="baSuggMean"></p><div class="btns"><button class="btn sm" id="baUseMean" type="button" hidden>Ortalamayı eşik yap</button></div></div>
             <div class="row2"><label for="baMin">Min. parça</label><div class="range-in"><input type="number" id="baMin" min="0" step="any" style="width:6em"><span id="baMinUnit">µm²</span></div></div>
             <p class="hint" id="baMinNote"></p>
-            <div class="checks"><label><input type="checkbox" id="baPrev"> Önizle: eşiği geçen alan kırmızı görünür</label></div>
             <p class="hint" id="baCurEmpty">Bu görüntüde ölçülecek bölge yok. Eşiği kırmızı önizlemeye bakarak yine de ayarlayabilirsiniz.</p>
             <div class="tbl-wrap" id="baCurWrap" hidden><table id="baCurTable"><thead></thead><tbody></tbody></table></div>
             <div class="btns"><button class="btn primary wide" id="baLock" type="button">Ayarları onayla</button></div>
@@ -3688,6 +3701,20 @@ function maskOf(w, W, H, T, minPx) {
   if (minPx > 1) sizeFilter(m, W, H, minPx);
   return m;
 }
+// Grey preview of a processed image at a reduced size (f = 1 keeps full size).
+function grayOf(w, W, H, mn, mx, f) {
+  const pW = Math.ceil(W / f), pH = Math.ceil(H / f), n = pW * pH;
+  const isInt = !(w instanceof Float32Array) && !(w instanceof Float64Array);
+  const [lo, hi] = autoRange(w, mn, mx > mn ? mx : mn + 1, isInt), sc = 255 / ((hi - lo) || 1);
+  const g = new Uint8Array(n);
+  if (f === 1) { for (let i = 0; i < n; i++) { const v = (w[i] - lo) * sc; g[i] = v < 0 ? 0 : v > 255 ? 255 : v; } }
+  else {
+    const acc = new Float32Array(n), cnt = new Uint16Array(n);
+    for (let y = 0; y < H; y++) { const oy = ((y / f) | 0) * pW, row = y * W; for (let x = 0; x < W; x++) { const o = oy + ((x / f) | 0); const v = (w[row + x] - lo) * sc; acc[o] += v < 0 ? 0 : v > 255 ? 255 : v; cnt[o]++; } }
+    for (let o = 0; o < n; o++) g[o] = cnt[o] ? acc[o] / cnt[o] : 0;
+  }
+  return g;
+}
 // Shared by the background worker and the main-thread fallback.
 function baHandle(d, store) {
   if (d.type === 'proc') {
@@ -3697,8 +3724,8 @@ function baHandle(d, store) {
     let mn = Infinity, mx = -Infinity;
     for (let i = 0; i < w.length; i++) { const v = w[i]; if (v < mn) mn = v; if (v > mx) mx = v; }
     if (!(mn <= mx)) { mn = 0; mx = 1; }
-    const copy = w.slice();
-    return { res: { w: copy, mn, mx }, transfer: [copy.buffer] };
+    const copy = w.slice(), gray = d.pf ? grayOf(w, d.W, d.H, mn, mx, d.pf) : null;
+    return { res: { w: copy, mn, mx, gray, pf: d.pf || 0 }, transfer: gray ? [copy.buffer, gray.buffer] : [copy.buffer] };
   }
   if (d.type === 'mask') {
     const s = store.get(d.sid); if (!s) throw new Error('İşlenmiş görüntü bulunamadı.');
@@ -3710,8 +3737,10 @@ function baHandle(d, store) {
 }
 
 const BA_PROJ = { max: 'Maksimum', mean: 'Ortalama', sum: 'Toplam' };
+const BA_VIEWS = { proc: 1, procOnly: 1, orig: 1, off: 1 };
+const BA_METHODS = { otsu: 'Otsu', triangle: 'Triangle', li: 'Li', default: 'Default (IsoData)', mean: 'Mean' };
 const BA_KEY = 'lamel.toplu';
-const ba = { ch: 0, proj: 'max', rad: 50, med: 0, minA: 0, thr: null, prev: true, qcOn: true, locked: false,
+const ba = { ch: 0, proj: 'max', rad: 50, med: 0, minA: 0, thr: null, prev: true, view: 'proc', method: 'otsu', sugg: new Map(), gray: null, qcOn: true, locked: false,
   cache: null, mask: null, maskBusy: false, maskAgain: false, pending: null, timer: 0, frame: 0,
   results: [], qc: new Map(), running: false, sel: new Set(), rev: 0, lastSig: '', prevKey: '' };
 try {
@@ -3725,11 +3754,13 @@ try {
     if (Number.isFinite(v.thr)) ba.thr = v.thr;
     if (typeof v.qcOn === 'boolean') ba.qcOn = v.qcOn;
     if (typeof v.locked === 'boolean') ba.locked = v.locked && Number.isFinite(v.thr);
-    if (v.v === 2 && typeof v.prev === 'boolean') ba.prev = v.prev;
+    if (v.v === 3 && BA_VIEWS[v.view]) ba.view = v.view;
+    if (BA_METHODS[v.method]) ba.method = v.method;
+    ba.prev = ba.view !== 'off';
   }
 } catch (e) { /* storage unavailable */ }
 function baStore() {
-  try { localStorage.setItem(BA_KEY, JSON.stringify({ v: 2, ch: ba.ch, proj: ba.proj, rad: ba.rad, med: ba.med, minA: ba.minA, thr: ba.thr, qcOn: ba.qcOn, locked: ba.locked, prev: ba.prev })); } catch (e) { /* ignore */ }
+  try { localStorage.setItem(BA_KEY, JSON.stringify({ v: 3, ch: ba.ch, proj: ba.proj, rad: ba.rad, med: ba.med, minA: ba.minA, thr: ba.thr, qcOn: ba.qcOn, locked: ba.locked, view: ba.view, method: ba.method })); } catch (e) { /* ignore */ }
 }
 const baPrevCv = document.createElement('canvas');
 let baPrevOn = false, baPrevData = null;
@@ -3746,7 +3777,7 @@ function baWorkerGet() {
   if (baWorker || baWorkerOff || typeof Worker !== 'function') return baWorker;
   try {
     const src = ['const f32 = Math.fround, MAXF = 3.4028234663852886e38, THIRD = f32(0.333333333);',
-      rbBall, rbFilter3, rbSmooth, rbShrink, rbRoll, rbInterp, rbEnlarge, rollingBall, medianFilter, sizeFilter, maskOf, baHandle].map(String).join('\n') +
+      rbBall, rbFilter3, rbSmooth, rbShrink, rbRoll, rbInterp, rbEnlarge, rollingBall, medianFilter, sizeFilter, maskOf, autoRange, grayOf, baHandle].map(String).join('\n') +
       '\nconst store = new Map();\nself.onmessage = e => { const d = e.data; try { const r = baHandle(d, store); self.postMessage(Object.assign({ rid: d.rid }, r.res), r.transfer); } catch (err) { self.postMessage({ rid: d.rid, error: String((err && err.message) || err) }); } };';
     baWorker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
     baWorker.onmessage = e => { const j = baJobs.get(e.data.rid); if (!j) return; baJobs.delete(e.data.rid); if (e.data.error) j.reject(new Error(e.data.error)); else j.resolve(e.data); };
@@ -3786,10 +3817,11 @@ async function baProject(img, c, proj) {
   return out;
 }
 // Processes one image with the given settings; returns { raw, w, mn, mx, sid }.
-async function baProcess(img, set) {
+const baPrevF = img => Math.max(1, Math.ceil(Math.sqrt(img.width * img.height / 4e6)));
+async function baProcess(img, set, pf = 0) {
   const raw = await baProject(img, set.ch, set.proj), sid = ++baSidSeq, copy = raw.slice();
-  const r = await baCall({ type: 'proc', sid, raw: copy, W: img.width, H: img.height, rad: set.rad, med: set.med }, [copy.buffer]);
-  return { raw, w: r.w, mn: r.mn, mx: r.mx, sid };
+  const r = await baCall({ type: 'proc', sid, raw: copy, W: img.width, H: img.height, rad: set.rad, med: set.med, pf }, [copy.buffer]);
+  return { raw, w: r.w, mn: r.mn, mx: r.mx, sid, gray: r.gray || null, grayF: r.pf || 0 };
 }
 
 let baImgSeq = 0;
@@ -3807,7 +3839,7 @@ async function baCurrent() {
   const job = { img, key };
   job.p = (async () => {
     try {
-      const r = await baProcess(img, { ch: ba.ch, proj: ba.proj, rad: ba.rad, med: ba.med });
+      const r = await baProcess(img, { ch: ba.ch, proj: ba.proj, rad: ba.rad, med: ba.med }, baPrevF(img));
       if (state.img !== img || baKeyNow() !== key) { baDrop(r.sid); return null; }
       if (ba.cache) baDrop(ba.cache.sid);
       ba.mask = null;
@@ -3831,14 +3863,15 @@ async function baEnsureMask() {
   } finally { ba.maskBusy = false; }
   if (ba.maskAgain) { ba.maskAgain = false; await baEnsureMask(); }
 }
-function baDefaultThr(c) {
+function baAutoThr(c, method) {
   const { w, mn, mx } = c, span = mx - mn;
   if (!(span > 0)) return mn;
   const hist = new Float64Array(256), sc = 256 / span;
   for (let i = 0; i < w.length; i++) { let b = ((w[i] - mn) * sc) | 0; if (b < 0) b = 0; else if (b > 255) b = 255; hist[b]++; }
-  const t = mn + (binThreshold(hist, 'default') + 1) * span / 256;
+  const t = mn + (binThreshold(hist, method) + 1) * span / 256;
   return baIsInt(w) ? Math.round(t) : t;
 }
+const baDefaultThr = c => baAutoThr(c, 'default');
 function baRegions(shapes) {
   const out = []; let k = 0;
   for (const s of shapes) {
@@ -3894,7 +3927,7 @@ function baSyncThr() {
     if (document.activeElement !== nb) nb.value = ba.thr == null ? '' : String(+(+ba.thr).toPrecision(6));
     rg.disabled = true; nb.disabled = ba.locked;
     $('#baInfo').textContent = ba.pending ? 'Önizleme hazırlanıyor…'
-      : !ba.prev ? 'Kaydırıcıyı kullanmak ve eşiğin bu görüntüde neyi seçtiğini görmek için önizlemeyi açın.'
+      : ba.view === 'off' ? 'Kaydırıcıyı kullanmak ve eşiğin bu görüntüde neyi seçtiğini görmek için önizlemeyi açın.'
       : '';
     return;
   }
@@ -3906,11 +3939,15 @@ function baSyncThr() {
   rg.value = String(ba.thr);
   nb.step = isInt ? '1' : 'any';
   if (document.activeElement !== nb) nb.value = String(+(+ba.thr).toPrecision(6));
-  $('#baInfo').textContent = `Bu görüntüde işlenmiş değerler ${fmtVal(c.mn, isInt)} ile ${fmtVal(c.mx, isInt)} arasında. Eşiğe eşit ya da büyük pikseller pozitif sayılır.`;
+  let info = `Bu görüntüde işlenmiş değerler ${fmtVal(c.mn, isInt)} ile ${fmtVal(c.mx, isInt)} arasında. Eşiğe eşit ya da büyük pikseller pozitif sayılır.`;
+  if (ba.thr > c.mx) info = `Eşik (${fmtNum(ba.thr)}) bu görüntüdeki en yüksek değerden (${fmtVal(c.mx, isInt)}) büyük, bu yüzden hiçbir piksel seçilmiyor. Eşiği düşürün ya da aşağıdan otomatik bir değer önerin.`;
+  else if (ba.thr <= c.mn) info = `Eşik (${fmtNum(ba.thr)}) bu görüntüdeki en düşük değere eşit ya da ondan küçük, bu yüzden bütün pikseller seçiliyor. Eşiği yükseltin ya da aşağıdan otomatik bir değer önerin.`;
+  $('#baInfo').textContent = info;
+  $('#baInfo').classList.toggle('warn', ba.thr > c.mx || ba.thr <= c.mn);
 }
 function baApplyLock() {
   const on = ba.locked;
-  ['#baCh', '#baProj', '#baRad', '#baMed', '#baThrN', '#baMin'].forEach(s => { $(s).disabled = on; });
+  ['#baCh', '#baProj', '#baRad', '#baMed', '#baThrN', '#baMin', '#baAuto', '#baAutoBtn', '#baUseMean'].forEach(s => { $(s).disabled = on; });
   $('#baThr').disabled = on || !baCacheOk();
   const b = $('#baLock');
   b.textContent = on ? 'Ayarları değiştir' : 'Ayarları onayla';
@@ -3924,11 +3961,11 @@ function baStepDone(n, on) {
 }
 function baRenderCurrent() {
   const img = state.img, c = ba.cache, regs = img ? baRegions(state.shapes) : [];
-  const ready = !!img && ba.prev && baMaskOk();
+  const ready = !!img && ba.view !== 'off' && baMaskOk();
   const empty = $('#baCurEmpty');
   empty.textContent = !regs.length ? 'Bu görüntüde ölçülecek bölge yok.'
-    : !ba.prev ? 'Önizlemeyi açınca bu görüntüdeki bölgelerin sonucu burada görünür.' : 'Hesaplanıyor…';
-  if (!ready && regs.length && ba.prev && !$('#baCurWrap').hidden) return;   // keep the last table while a new mask is computed
+    : ba.view === 'off' ? 'Önizlemeyi açınca bu görüntüdeki bölgelerin sonucu burada görünür.' : 'Hesaplanıyor…';
+  if (!ready && regs.length && ba.view !== 'off' && !$('#baCurWrap').hidden) return;   // keep the last table while a new mask is computed
   empty.hidden = regs.length > 0 && ready; $('#baCurWrap').hidden = !regs.length || !ready;
   if (!regs.length || !ready) return;
   const res = baMeasure(img, c.raw, c.w, ba.mask.m, regs), u = baUnit(img);
@@ -3946,29 +3983,72 @@ function baRenderCurrent() {
   });
   tbody.append(frag);
 }
+// Grey version of the processed image at preview resolution, rebuilt only when the
+// processed image itself changes.
+function baGray(img, c, f) {
+  if (c.gray && c.grayF === f) return c.gray;
+  c.gray = grayOf(c.w, img.width, img.height, c.mn, c.mx, f); c.grayF = f;
+  return c.gray;
+}
 function baRenderPreview() {
   const img = state.img;
-  const want = !!img && $('#secBatch').open && ba.prev && baCacheOk() && ba.thr != null;
+  const want = !!img && $('#secBatch').open && ba.view !== 'off' && baCacheOk() && ba.thr != null;
   if (!want) { if (baPrevOn) { baPrevOn = false; ba.prevKey = ''; requestDraw(); } return; }
-  if (!baMaskOk()) return;   // keep the previous overlay until the new mask arrives
-  const key = `${baImgId(img)}|${ba.mask.key}`;
+  const needMask = ba.view !== 'procOnly';
+  if (needMask && !baMaskOk()) return;   // keep the previous picture until the new mask arrives
+  const c = ba.cache, key = `${baImgId(img)}|${ba.view}|${c.sid}|${needMask ? ba.mask.key : ''}`;
   if (baPrevOn && ba.prevKey === key) return;
-  // Large images get a coarser overlay (at most about 4 million pixels) to keep memory low.
-  const W = img.width, H = img.height, m = ba.mask.m, f = Math.max(1, Math.ceil(Math.sqrt(W * H / 4e6)));
-  const pW = Math.ceil(W / f), pH = Math.ceil(H / f);
+  // Large images are drawn at a lower resolution (at most about 4 million pixels) to keep memory low.
+  const W = img.width, H = img.height, f = baPrevF(img);
+  const pW = Math.ceil(W / f), pH = Math.ceil(H / f), n = pW * pH;
   if (baPrevCv.width !== pW || baPrevCv.height !== pH || !baPrevData) { baPrevCv.width = pW; baPrevCv.height = pH; baPrevData = baPrevCv.getContext('2d').createImageData(pW, pH); }
-  const px = new Uint32Array(baPrevData.data.buffer); px.fill(0);
-  if (f === 1) {
-    const col = ((130 << 24) | (45 << 16) | (45 << 8) | 255) >>> 0;
-    for (let i = 0, n = W * H; i < n; i++) if (m[i]) px[i] = col;
+  const px = new Uint32Array(baPrevData.data.buffer);
+  let frac = null;
+  if (needMask) {
+    const m = ba.mask.m;
+    if (f === 1) frac = m;
+    else {
+      const cnt = new Uint16Array(n);
+      for (let y = 0; y < H; y++) { const oy = ((y / f) | 0) * pW, row = y * W; for (let x = 0; x < W; x++) if (m[row + x]) cnt[oy + ((x / f) | 0)]++; }
+      frac = cnt;
+    }
+  }
+  const full = f === 1 ? 1 : f * f;
+  if (ba.view === 'orig') {
+    // overlay on the normal display, in the colour that differs most from the visible channels
+    const vis = img.channels.filter(ch => ch.visible).map(ch => ch.color);
+    let best = [255, 255, 255], bestD = -1;
+    for (const cand of [[0, 229, 255], [255, 0, 255], [255, 230, 0], [255, 255, 255]]) {
+      const d = vis.length ? Math.min(...vis.map(v => Math.hypot(v[0] - cand[0], v[1] - cand[1], v[2] - cand[2]))) : 999;
+      if (d > bestD) { bestD = d; best = cand; }
+    }
+    const [r, g, b] = best;
+    px.fill(0);
+    for (let o = 0; o < n; o++) { const k = frac[o]; if (k) px[o] = ((Math.round(170 * Math.min(1, k / full)) << 24) | (b << 16) | (g << 8) | r) >>> 0; }
   } else {
-    const cnt = new Uint16Array(pW * pH);
-    for (let y = 0; y < H; y++) { const oy = ((y / f) | 0) * pW, row = y * W; for (let x = 0; x < W; x++) if (m[row + x]) cnt[oy + ((x / f) | 0)]++; }
-    const full = f * f;
-    for (let o = 0; o < cnt.length; o++) if (cnt[o]) px[o] = ((Math.round(130 * Math.min(1, cnt[o] / full)) << 24) | (45 << 16) | (45 << 8) | 255) >>> 0;
+    const gr = baGray(img, c, f);
+    for (let o = 0; o < n; o++) {
+      const v = gr[o]; let r = v, g = v, b = v;
+      if (frac && frac[o]) { const a = 0.6 * Math.min(1, frac[o] / full); r = v + (255 - v) * a; g = v * (1 - a) + 40 * a; b = v * (1 - a) + 40 * a; }
+      px[o] = ((255 << 24) | ((b & 255) << 16) | ((g & 255) << 8) | (r & 255)) >>> 0;
+    }
   }
   baPrevCv.getContext('2d').putImageData(baPrevData, 0, 0);
   baPrevOn = true; ba.prevKey = key; requestDraw();
+}
+// Automatic threshold suggestions: one value per image, so that a single fixed threshold
+// can be chosen from several images.
+function baRenderSugg() {
+  const box = $('#baSugg'), list = $('#baSuggList'), key = baKeyNow();
+  const rows = [...ba.sugg.values()].filter(x => x.proc === key && x.method === ba.method);
+  box.hidden = !rows.length;
+  if (!rows.length) return;
+  list.textContent = '';
+  rows.forEach(x => list.append(el('li', {}, el('span', { text: x.name }), el('span', { class: 'ba-sv', text: fmtNum(x.value) }))));
+  const mean = rows.reduce((a, x) => a + x.value, 0) / rows.length;
+  $('#baSuggMean').textContent = rows.length > 1 ? `${rows.length} görüntünün ortalaması: ${fmtNum(mean)}` : 'Başka görüntülerde de öneri alıp ortalamasını kullanabilirsiniz.';
+  $('#baUseMean').hidden = rows.length < 2;
+  $('#baUseMean').dataset.v = String(mean);
 }
 function baRenderList(items) {
   const box = $('#baList'), L = baLif(), now = baSig(ba), done = new Map();
@@ -4032,7 +4112,7 @@ async function baRefresh() {
   if (!img || ba.running) return;
   const sig = baViewSig();
   if (sig !== ba.lastSig) { ba.lastSig = sig; baApplyLock(); baRenderSteps(); baRenderCurrent(); }
-  if (!$('#secBatch').open || !ba.prev) { baSyncThr(); baRenderPreview(); baRenderCurrent(); return; }
+  if (!$('#secBatch').open || ba.view === 'off') { baSyncThr(); baRenderPreview(); baRenderCurrent(); return; }
   if (!baCacheOk()) {
     baSyncThr(); baRenderCurrent();
     let c;
@@ -4042,6 +4122,7 @@ async function baRefresh() {
     if (ba.thr == null) { ba.thr = baDefaultThr(c); baStore(); }
     baApplyLock(); baSyncThr();
   }
+  baRenderSugg();
   await baView();
 }
 function baSchedule() { clearTimeout(ba.timer); ba.timer = setTimeout(baRefresh, 120); }
@@ -4055,7 +4136,8 @@ function baInit() {
   if (ba.ch >= img.nC) { ba.ch = 0; ba.thr = null; ba.locked = false; }
   sel.value = String(ba.ch);
   $('#baProj').value = ba.proj; $('#baRad').value = String(ba.rad); $('#baMed').value = String(ba.med); $('#baMin').value = String(ba.minA);
-  $('#baPrev').checked = ba.prev; $('#baQC').checked = ba.qcOn;
+  $('#baView').value = ba.view; $('#baAuto').value = ba.method; $('#baQC').checked = ba.qcOn;
+  baRenderSugg();
   baNotes(); baApplyLock(); baRenderResults(); baSchedule();
 }
 async function baQCPng(img, w, m, regs, set, label) {
@@ -4187,14 +4269,50 @@ const baNum = (v, min = 0) => { const x = parseFloat(String(v).replace(',', '.')
 $('#secBatch').addEventListener('toggle', () => { if ($('#secBatch').open) { renderFiji(); ba.lastSig = ''; baRefresh(); } else baRenderPreview(); });
 $('#baCh').addEventListener('change', e => { ba.ch = +e.target.value; ba.thr = null; baStore(); baSchedule(); });
 $('#baProj').addEventListener('change', e => { ba.proj = e.target.value; ba.thr = null; baStore(); baSchedule(); });
-$('#baRad').addEventListener('change', e => { ba.rad = baNum(e.target.value); e.target.value = String(ba.rad); baStore(); baNotes(); baSchedule(); });
-$('#baMed').addEventListener('change', e => { ba.med = baNum(e.target.value); e.target.value = String(ba.med); baStore(); baNotes(); baSchedule(); });
-$('#baMin').addEventListener('change', e => { ba.minA = baNum(e.target.value); e.target.value = String(ba.minA); baStore(); baNotes(); baSchedule(); });
+function baLive(sel, field) {
+  const inp = $(sel); let t = 0;
+  const apply = fin => {
+    clearTimeout(t);
+    const raw = String(inp.value).trim(); if (!fin && (raw === '' || raw.endsWith('.') || raw.endsWith(','))) return;
+    const v = baNum(raw); if (fin) inp.value = String(v);
+    if (v === ba[field]) return;
+    ba[field] = v; baStore(); baNotes(); baSchedule();
+  };
+  inp.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => apply(false), 450); });
+  inp.addEventListener('change', () => apply(true));
+}
+baLive('#baRad', 'rad'); baLive('#baMed', 'med'); baLive('#baMin', 'minA');
 $('#baThr').addEventListener('input', e => { ba.thr = +e.target.value; baThrChanged(); });
-$('#baThrN').addEventListener('change', e => {
-  const v = parseFloat(String(e.target.value).replace(',', '.'));
-  if (!Number.isFinite(v)) { baSyncThr(); return; }
-  ba.thr = baCacheOk() && baIsInt(ba.cache.w) ? Math.round(v) : v; baThrChanged();
+let baThrT = 0;
+function baThrTyped(fin) {
+  clearTimeout(baThrT);
+  const v = parseFloat(String($('#baThrN').value).replace(',', '.'));
+  if (!Number.isFinite(v)) { if (fin) baSyncThr(); return; }
+  const t = baCacheOk() && baIsInt(ba.cache.w) ? Math.round(v) : v;
+  if (t === ba.thr) return;
+  ba.thr = t; baThrChanged();
+}
+$('#baThrN').addEventListener('input', () => { clearTimeout(baThrT); baThrT = setTimeout(() => baThrTyped(false), 350); });
+$('#baThrN').addEventListener('change', () => baThrTyped(true));
+$('#baView').addEventListener('change', e => { ba.view = e.target.value; ba.prev = ba.view !== 'off'; baStore(); ba.lastSig = ''; ba.prevKey = ''; baRefresh(); });
+$('#baAuto').addEventListener('change', e => { ba.method = e.target.value; baStore(); baRenderSugg(); });
+$('#baAutoBtn').addEventListener('click', async () => {
+  if (ba.locked || !state.img) return;
+  if (ba.view === 'off') { ba.view = 'proc'; ba.prev = true; $('#baView').value = 'proc'; baStore(); }
+  let c;
+  try { c = await baCurrent(); } catch (err) { console.error(err); toast('Görüntü işlenemedi.'); return; }
+  if (!c) return;
+  const v = baAutoThr(c, ba.method), L = baLif(), cur = baImages().find(it => it.current);
+  const name = cur ? (L ? cur.name.slice(cur.name.lastIndexOf('/') + 1) : cur.name) : state.img.name;
+  ba.sugg.set(cur ? cur.key : state.img.name, { name, method: ba.method, value: v, proc: baKeyNow() });
+  ba.thr = v; baThrChanged(); baRenderSugg();
+  toast(`${BA_METHODS[ba.method]} bu görüntü için ${fmtNum(v)} önerdi; eşik bu değere ayarlandı.`);
+});
+$('#baUseMean').addEventListener('click', () => {
+  if (ba.locked) return;
+  const m = parseFloat($('#baUseMean').dataset.v); if (!Number.isFinite(m)) return;
+  ba.thr = baCacheOk() && baIsInt(ba.cache.w) ? Math.round(m) : m; baThrChanged();
+  toast(`Eşik ortalamaya ayarlandı: ${fmtNum(ba.thr)}.`);
 });
 $('#baLock').addEventListener('click', () => {
   if (!ba.locked && (ba.thr == null || !Number.isFinite(ba.thr))) { toast('Önce eşiği ayarlayın.'); return; }
@@ -4203,7 +4321,6 @@ $('#baLock').addEventListener('click', () => {
 });
 $('#baAll').addEventListener('click', () => { baImages().forEach(it => { if (it.regs.length && !it.problem) ba.sel.add(it.id); }); psSchedule(); baRenderSteps(); });
 $('#baNone').addEventListener('click', () => { ba.sel.clear(); psSchedule(); baRenderSteps(); });
-$('#baPrev').addEventListener('change', e => { ba.prev = e.target.checked; baStore(); ba.lastSig = ''; baRefresh(); });
 $('#baQC').addEventListener('change', e => { ba.qcOn = e.target.checked; baStore(); });
 $('#baRun').addEventListener('click', () => { baRun().catch(err => { console.error(err); toast('Analiz tamamlanamadı.'); }); });
 $('#baClear').addEventListener('click', () => { ba.results = []; ba.qc.clear(); ba.rev++; baRenderResults(); baRenderSteps(); psSchedule(); });
